@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useResponsive } from '../hooks/useResponsive';
 import api from '../services/api';
 
 const COLORS = {
@@ -18,6 +19,7 @@ export default function DoctorLogin({ onLogin }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { isMobile } = useResponsive();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -49,10 +51,16 @@ export default function DoctorLogin({ onLogin }) {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.leftPanel}>
-        <div style={styles.logo}>❤️</div>
-        <h1 style={styles.title}>OncoConnect</h1>
+    <div style={{...styles.container, ...(isMobile && { flexDirection: 'column' })}} className="login-container">
+      <div
+        style={{
+          ...styles.leftPanel,
+          ...(isMobile && { display: 'none' }),
+        }}
+        className="login-left-panel"
+      >
+        <div style={{...styles.logo, ...(isMobile && { fontSize: '60px' })}}>❤️</div>
+        <h1 style={{...styles.title, ...(isMobile && { fontSize: '28px' })}}>OncoConnect</h1>
         <p style={styles.subtitle}>Clinical Management for Oncologists</p>
         
         <div style={styles.features}>
@@ -75,9 +83,9 @@ export default function DoctorLogin({ onLogin }) {
         </div>
       </div>
 
-      <div style={styles.rightPanel}>
+      <div style={{...styles.rightPanel, ...(isMobile && { padding: '20px' })}} className="login-right-panel">
         <div style={styles.formContainer}>
-          <h2 style={styles.formTitle}>Doctor Login</h2>
+          <h2 style={{...styles.formTitle, ...(isMobile && { fontSize: '24px' })}}>Doctor Login</h2>
           <p style={styles.formSubtitle}>Access your patient panel and earnings</p>
 
           <form onSubmit={handleLogin} style={styles.form}>

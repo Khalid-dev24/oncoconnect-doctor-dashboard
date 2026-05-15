@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useResponsive } from '../hooks/useResponsive';
+import Navbar from '../components/Navbar';
 import api from '../services/api';
 
 const COLORS = {
@@ -16,6 +18,7 @@ const COLORS = {
 
 export default function PatientPanel({ doctorId, onLogout }) {
   const navigate = useNavigate();
+  const { isMobile } = useResponsive();
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -54,6 +57,7 @@ export default function PatientPanel({ doctorId, onLogout }) {
   if (loading) {
     return (
       <div style={styles.container}>
+        <Navbar currentPage="patients" onLogout={onLogout} />
         <div style={styles.loadingBox}>Loading patients...</div>
       </div>
     );
@@ -62,33 +66,14 @@ export default function PatientPanel({ doctorId, onLogout }) {
   return (
     <div style={styles.container}>
       {/* Navigation Bar */}
-      <div style={styles.navbar}>
-        <div style={styles.navContent}>
-          <div style={styles.navBrand}>
-            <span style={styles.logo}>❤️</span>
-            <span style={styles.brandName}>OncoConnect</span>
-          </div>
-
-          <div style={styles.navLinks}>
-            <a href="/dashboard" style={styles.navLink}>Dashboard</a>
-            <a href="/patients" style={{ ...styles.navLink, color: COLORS.mint }}>
-              Patients
-            </a>
-            <a href="/earnings" style={styles.navLink}>Earnings</a>
-            <a href="/prescriptions" style={styles.navLink}>Prescriptions</a>
-            <button onClick={handleLogout} style={styles.logoutButton}>
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
+      <Navbar currentPage="patients" onLogout={onLogout} />
 
       {/* Main Content */}
-      <div style={styles.mainContent}>
+      <div style={{...styles.mainContent, ...(isMobile && { padding: '20px 12px' })}} className="responsive-padding-lg">
         {/* Header */}
-        <div style={styles.header}>
+        <div style={{...styles.header, ...(isMobile && { marginBottom: '24px' })}}>
           <div>
-            <h1 style={styles.title}>Patient Panel</h1>
+            <h1 style={{...styles.title, ...(isMobile && { fontSize: '24px' })}}>Patient Panel</h1>
             <p style={styles.subtitle}>
               {patients.length} patients linked to your profile
             </p>
@@ -96,7 +81,7 @@ export default function PatientPanel({ doctorId, onLogout }) {
         </div>
 
         {/* Filter Buttons */}
-        <div style={styles.filterContainer}>
+        <div style={{...styles.filterContainer, ...(isMobile && { flexDirection: 'column', gap: '8px' })}} className="responsive-filter-container">
           <button
             onClick={() => setFilterRisk('all')}
             style={{
@@ -141,7 +126,7 @@ export default function PatientPanel({ doctorId, onLogout }) {
 
         {/* Patients Grid */}
         {filteredPatients.length > 0 ? (
-          <div style={styles.grid}>
+          <div style={{...styles.grid, ...(isMobile && { gridTemplateColumns: '1fr' })}} data-grid="autofill">
             {filteredPatients.map((patient) => (
               <div
                 key={patient.id}
@@ -204,8 +189,8 @@ export default function PatientPanel({ doctorId, onLogout }) {
 
         {/* Patient Details Modal */}
         {selectedPatient && (
-          <div style={styles.modalOverlay} onClick={() => setSelectedPatient(null)}>
-            <div style={styles.modal} onClick={(e) => e.stopPropagation()}>
+          <div style={{...styles.modalOverlay, ...(isMobile && { padding: '16px' })}} onClick={() => setSelectedPatient(null)} className="responsive-modal-overlay">
+            <div style={{...styles.modal, ...(isMobile && { borderRadius: '8px', padding: '16px' })}} onClick={(e) => e.stopPropagation()} className="responsive-modal-content">
               <div style={styles.modalHeader}>
                 <h2 style={styles.modalTitle}>Patient Details</h2>
                 <button

@@ -8,6 +8,7 @@ import DoctorDashboard from './pages/DoctorDashboard';
 import PatientPanel from './pages/PatientPanel';
 import EarningsPage from './pages/EarningsPage';
 import PrescriptionsPage from './pages/PrescriptionsPage';
+import DoctorProfile from './pages/DoctorProfile';
 
 // Colors
 const COLORS = {
@@ -118,6 +119,15 @@ export default function App() {
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
               <PrescriptionsPage doctorId={doctorId} onLogout={handleLogout} />
+            </ProtectedRoute>
+          }
+        />
+        
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
+              <DoctorProfile doctorId={doctorId} onLogout={handleLogout} />
             </ProtectedRoute>
           }
         />

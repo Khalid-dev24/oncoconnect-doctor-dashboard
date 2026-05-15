@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useResponsive } from '../hooks/useResponsive';
 import api from '../services/api';
 
 const COLORS = {
@@ -15,6 +16,7 @@ const COLORS = {
 
 export default function DoctorOnboarding({ onRegister }) {
   const navigate = useNavigate();
+  const { isMobile } = useResponsive();
   
   const [step, setStep] = useState(1); // 1: Info, 2: Bank, 3: Documents
   const [loading, setLoading] = useState(false);
@@ -100,8 +102,8 @@ export default function DoctorOnboarding({ onRegister }) {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
+    <div style={{...styles.container, ...(isMobile && { padding: '20px 12px' })}}>
+      <div style={{...styles.card, ...(isMobile && { padding: '20px' })}}>
         <div style={styles.header}>
           <button
             onClick={() => navigate('/login')}
@@ -146,7 +148,7 @@ export default function DoctorOnboarding({ onRegister }) {
           <div style={styles.formGroup}>
             <h2 style={styles.stepTitle}>Your Information</h2>
 
-            <div style={styles.twoColumn}>
+            <div style={{...styles.twoColumn, ...(isMobile && { gridTemplateColumns: '1fr', gap: '12px' })}} data-grid="form2col">
               <div style={styles.fieldGroup}>
                 <label style={styles.label}>Full Name *</label>
                 <input
@@ -171,7 +173,7 @@ export default function DoctorOnboarding({ onRegister }) {
               </div>
             </div>
 
-            <div style={styles.twoColumn}>
+            <div style={{...styles.twoColumn, ...(isMobile && { gridTemplateColumns: '1fr', gap: '12px' })}} data-grid="form2col">
               <div style={styles.fieldGroup}>
                 <label style={styles.label}>MDCN Number *</label>
                 <input
@@ -197,7 +199,7 @@ export default function DoctorOnboarding({ onRegister }) {
               </div>
             </div>
 
-            <div style={styles.twoColumn}>
+            <div style={{...styles.twoColumn, ...(isMobile && { gridTemplateColumns: '1fr', gap: '12px' })}} data-grid="form2col">
               <div style={styles.fieldGroup}>
                 <label style={styles.label}>Hospital/Clinic</label>
                 <input
@@ -235,7 +237,7 @@ export default function DoctorOnboarding({ onRegister }) {
               Where should we send your earnings? Your payments arrive within 24 hours.
             </p>
 
-            <div style={styles.twoColumn}>
+            <div style={{...styles.twoColumn, ...(isMobile && { gridTemplateColumns: '1fr', gap: '12px' })}} data-grid="form2col">
               <div style={styles.fieldGroup}>
                 <label style={styles.label}>Bank Name *</label>
                 <select

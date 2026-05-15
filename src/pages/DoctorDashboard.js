@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useResponsive } from '../hooks/useResponsive';
+import Navbar from '../components/Navbar';
 import api from '../services/api';
 
 const COLORS = {
@@ -16,6 +18,7 @@ const COLORS = {
 
 export default function DoctorDashboard({ doctorId, onLogout }) {
   const navigate = useNavigate();
+  const { isMobile } = useResponsive();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
@@ -54,6 +57,7 @@ export default function DoctorDashboard({ doctorId, onLogout }) {
   if (loading) {
     return (
       <div style={styles.container}>
+        <Navbar currentPage="dashboard" onLogout={onLogout} />
         <div style={styles.loadingBox}>Loading your dashboard...</div>
       </div>
     );
@@ -66,39 +70,20 @@ export default function DoctorDashboard({ doctorId, onLogout }) {
   return (
     <div style={styles.container}>
       {/* Navigation Bar */}
-      <div style={styles.navbar}>
-        <div style={styles.navContent}>
-          <div style={styles.navBrand}>
-            <span style={styles.logo}>❤️</span>
-            <span style={styles.brandName}>OncoConnect</span>
-          </div>
-          
-          <div style={styles.navLinks}>
-            <a href="/dashboard" style={{ ...styles.navLink, color: COLORS.mint }}>
-              Dashboard
-            </a>
-            <a href="/patients" style={styles.navLink}>Patients</a>
-            <a href="/earnings" style={styles.navLink}>Earnings</a>
-            <a href="/prescriptions" style={styles.navLink}>Prescriptions</a>
-            <button onClick={handleLogout} style={styles.logoutButton}>
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
+      <Navbar currentPage="dashboard" onLogout={onLogout} />
 
       {/* Main Content */}
-      <div style={styles.mainContent}>
+      <div style={{...styles.mainContent, ...(isMobile && { padding: '20px 12px' })}} className="responsive-padding-lg">
         {/* Header Section */}
-        <div style={styles.header}>
+        <div style={{...styles.header, ...(isMobile && { marginBottom: '24px' })}}>
           <div>
-            <h1 style={styles.title}>Welcome back, {dashboardData?.doctor?.name || 'Doctor'}</h1>
+            <h1 style={{...styles.title, ...(isMobile && { fontSize: '24px' })}}>Welcome back, {dashboardData?.doctor?.name || 'Doctor'}</h1>
             <p style={styles.subtitle}>Here's your patient panel and earnings at a glance</p>
           </div>
         </div>
 
         {/* Quick Stats */}
-        <div style={styles.statsGrid}>
+        <div style={{...styles.statsGrid, ...(isMobile && { gridTemplateColumns: '1fr', gap: '12px' })}} data-grid="4col">
           <div style={styles.statCard}>
             <div style={styles.statIcon}>👥</div>
             <div style={styles.statContent}>
@@ -133,22 +118,22 @@ export default function DoctorDashboard({ doctorId, onLogout }) {
         </div>
 
         {/* Invite Code Section */}
-        <div style={styles.inviteSection}>
-          <div style={styles.inviteContent}>
+        <div style={{...styles.inviteSection, ...(isMobile && { padding: '16px', flexDirection: 'column' })}} className="responsive-invite-content">
+          <div style={{...styles.inviteContent, ...(isMobile && { flexDirection: 'column', alignItems: 'stretch', gap: '16px' })}}>
             <div>
-              <h2 style={styles.sectionTitle}>Share Your Invite Code</h2>
+              <h2 style={{...styles.sectionTitle, ...(isMobile && { fontSize: '18px' })}}>Share Your Invite Code</h2>
               <p style={styles.sectionDescription}>
                 Give this code to patients to automatically link them to your profile. They'll enter it during registration.
               </p>
             </div>
-            <div style={styles.inviteBox}>
+            <div style={{...styles.inviteBox, ...(isMobile && { flexDirection: 'column', gap: '8px', width: '100%' })}} className="invite-box">
               <input
                 type="text"
                 value={dashboardData?.doctor?.invite_code || ''}
                 readOnly
-                style={styles.inviteInput}
+                style={{...styles.inviteInput, ...(isMobile && { minHeight: '48px', width: '100%' })}}
               />
-              <button onClick={copyInviteCode} style={styles.copyButton}>
+              <button onClick={copyInviteCode} style={{...styles.copyButton, ...(isMobile && { width: '100%', minHeight: '48px' })}}>
                 {copied ? '✓ Copied!' : 'Copy'}
               </button>
             </div>
@@ -163,7 +148,7 @@ export default function DoctorDashboard({ doctorId, onLogout }) {
           </p>
 
           {dashboardData?.patients && dashboardData.patients.length > 0 ? (
-            <div style={styles.patientGrid}>
+            <div style={{...styles.patientGrid, ...(isMobile && { gridTemplateColumns: '1fr' })}} data-grid="autofill">
               {dashboardData.patients.map((patient) => (
                 <div key={patient.id} style={styles.patientCard}>
                   <div style={styles.patientHeader}>

@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useResponsive } from '../hooks/useResponsive';
+import Navbar from '../components/Navbar';
 import api from '../services/api';
 
 const COLORS = {
@@ -16,6 +18,7 @@ const COLORS = {
 
 export default function EarningsPage({ doctorId, onLogout }) {
   const navigate = useNavigate();
+  const { isMobile } = useResponsive();
   const [earnings, setEarnings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [timeframe, setTimeframe] = useState('month'); // month, quarter, year
@@ -48,6 +51,7 @@ export default function EarningsPage({ doctorId, onLogout }) {
   if (loading) {
     return (
       <div style={styles.container}>
+        <Navbar currentPage="earnings" onLogout={onLogout} />
         <div style={styles.loadingBox}>Loading earnings...</div>
       </div>
     );
@@ -64,39 +68,20 @@ export default function EarningsPage({ doctorId, onLogout }) {
   return (
     <div style={styles.container}>
       {/* Navigation Bar */}
-      <div style={styles.navbar}>
-        <div style={styles.navContent}>
-          <div style={styles.navBrand}>
-            <span style={styles.logo}>❤️</span>
-            <span style={styles.brandName}>OncoConnect</span>
-          </div>
-
-          <div style={styles.navLinks}>
-            <a href="/dashboard" style={styles.navLink}>Dashboard</a>
-            <a href="/patients" style={styles.navLink}>Patients</a>
-            <a href="/earnings" style={{ ...styles.navLink, color: COLORS.mint }}>
-              Earnings
-            </a>
-            <a href="/prescriptions" style={styles.navLink}>Prescriptions</a>
-            <button onClick={handleLogout} style={styles.logoutButton}>
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
+      <Navbar currentPage="earnings" onLogout={onLogout} />
 
       {/* Main Content */}
-      <div style={styles.mainContent}>
+      <div style={{...styles.mainContent, ...(isMobile && { padding: '20px 12px' })}} className="responsive-padding-lg">
         {/* Header */}
-        <div style={styles.header}>
+        <div style={{...styles.header, ...(isMobile && { marginBottom: '24px' })}}>
           <div>
-            <h1 style={styles.title}>Earnings Dashboard</h1>
+            <h1 style={{...styles.title, ...(isMobile && { fontSize: '24px' })}}>Earnings Dashboard</h1>
             <p style={styles.subtitle}>Track your income from patient consultations</p>
           </div>
         </div>
 
         {/* Key Metrics */}
-        <div style={styles.metricsGrid}>
+        <div style={{...styles.metricsGrid, ...(isMobile && { gridTemplateColumns: '1fr' })}} data-grid="4col">
           <div style={styles.metricCard}>
             <div style={styles.metricLabel}>Total Earned</div>
             <div style={styles.metricValue}>
@@ -142,7 +127,7 @@ export default function EarningsPage({ doctorId, onLogout }) {
         <div style={styles.chartSection}>
           <div style={styles.chartHeader}>
             <h2 style={styles.chartTitle}>Earnings Over Time</h2>
-            <div style={styles.timeframeButtons}>
+            <div style={{...styles.timeframeButtons, ...(isMobile && { flexDirection: 'column', gap: '8px' })}} className="responsive-filter-container">
               <button
                 onClick={() => setTimeframe('month')}
                 style={{
@@ -225,7 +210,8 @@ export default function EarningsPage({ doctorId, onLogout }) {
           <h2 style={styles.sectionTitle}>Recent Transactions</h2>
 
           {transactions && transactions.length > 0 ? (
-            <div style={styles.transactionTable}>
+            <div style={isMobile ? { overflowX: 'auto', WebkitOverflowScrolling: 'touch' } : {}} className="table-container">
+              <div style={styles.transactionTable}>
               <div style={styles.tableHeader}>
                 <div style={styles.tableCell}>Type</div>
                 <div style={styles.tableCell}>Date</div>
@@ -259,6 +245,7 @@ export default function EarningsPage({ doctorId, onLogout }) {
                   </div>
                 </div>
               ))}
+            </div>
             </div>
           ) : (
             <div style={styles.emptyTransactions}>

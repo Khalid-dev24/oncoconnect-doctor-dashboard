@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useResponsive } from '../hooks/useResponsive';
+import Navbar from '../components/Navbar';
 import api from '../services/api';
 
 const COLORS = {
@@ -16,6 +18,7 @@ const COLORS = {
 
 export default function PrescriptionsPage({ doctorId, onLogout }) {
   const navigate = useNavigate();
+  const { isMobile } = useResponsive();
   const [prescriptions, setPrescriptions] = useState([]);
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -172,6 +175,7 @@ export default function PrescriptionsPage({ doctorId, onLogout }) {
   if (loading) {
     return (
       <div style={styles.container}>
+        <Navbar currentPage="prescriptions" onLogout={onLogout} />
         <div style={styles.loadingBox}>Loading prescriptions...</div>
       </div>
     );
@@ -180,40 +184,21 @@ export default function PrescriptionsPage({ doctorId, onLogout }) {
   return (
     <div style={styles.container}>
       {/* Navigation Bar */}
-      <div style={styles.navbar}>
-        <div style={styles.navContent}>
-          <div style={styles.navBrand}>
-            <span style={styles.logo}>❤️</span>
-            <span style={styles.brandName}>OncoConnect</span>
-          </div>
-
-          <div style={styles.navLinks}>
-            <a href="/dashboard" style={styles.navLink}>Dashboard</a>
-            <a href="/patients" style={styles.navLink}>Patients</a>
-            <a href="/earnings" style={styles.navLink}>Earnings</a>
-            <a href="/prescriptions" style={{ ...styles.navLink, color: COLORS.mint }}>
-              Prescriptions
-            </a>
-            <button onClick={handleLogout} style={styles.logoutButton}>
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
+      <Navbar currentPage="prescriptions" onLogout={onLogout} />
 
       {/* Main Content */}
-      <div style={styles.mainContent}>
+      <div style={{...styles.mainContent, ...(isMobile && { padding: '20px 12px' })}} className="responsive-padding-lg">
         {/* Header */}
-        <div style={styles.header}>
+        <div style={{...styles.header, ...(isMobile && { marginBottom: '24px', flexDirection: 'column', alignItems: 'flex-start', gap: '16px' })}}>
           <div>
-            <h1 style={styles.title}>Digital Prescriptions</h1>
+            <h1 style={{...styles.title, ...(isMobile && { fontSize: '24px' })}}>Digital Prescriptions</h1>
             <p style={styles.subtitle}>
               Create and manage digital prescriptions with QR code verification
             </p>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            style={styles.createButton}
+            style={{...styles.createButton, ...(isMobile && { width: '100%' })}}
           >
             {showForm ? '✕ Cancel' : '+ Create Prescription'}
           </button>
@@ -224,7 +209,7 @@ export default function PrescriptionsPage({ doctorId, onLogout }) {
           <div style={styles.formSection}>
             <h2 style={styles.formTitle}>New Digital Prescription</h2>
             <form onSubmit={handleSubmitPrescription} style={styles.form}>
-              <div style={styles.formGrid}>
+              <div style={{...styles.formGrid, ...(isMobile && { gridTemplateColumns: '1fr', gap: '12px' })}} data-grid="form2col">
                 <div style={styles.formGroup}>
                   <label style={styles.label}>Patient</label>
                   <select
