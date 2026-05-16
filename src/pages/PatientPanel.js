@@ -47,13 +47,6 @@ export default function PatientPanel({ doctorId, onLogout }) {
     return p.risk_badge.toLowerCase() === filterRisk.toLowerCase();
   });
 
-  const handleLogout = () => {
-    localStorage.removeItem('doctor_id');
-    localStorage.removeItem('doctor_token');
-    onLogout();
-    navigate('/login');
-  };
-
   if (loading) {
     return (
       <div style={styles.container}>

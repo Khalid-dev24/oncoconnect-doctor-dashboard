@@ -78,13 +78,6 @@ export default function PrescriptionsPage({ doctorId, onLogout }) {
     loadPatients();
   }, [loadPrescriptions, loadPatients]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('doctor_id');
-    localStorage.removeItem('doctor_token');
-    onLogout();
-    navigate('/login');
-  };
-
   const downloadPrescriptionPDF = async (prescriptionId) => {
     try {
       const response = await api.post(`/api/prescriptions/${prescriptionId}/generate-pdf`, {}, {

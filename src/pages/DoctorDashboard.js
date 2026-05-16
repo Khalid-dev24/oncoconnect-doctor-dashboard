@@ -47,13 +47,6 @@ export default function DoctorDashboard({ doctorId, onLogout }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('doctor_id');
-    localStorage.removeItem('doctor_token');
-    onLogout();
-    navigate('/login');
-  };
-
   if (loading) {
     return (
       <div style={styles.container}>

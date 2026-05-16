@@ -41,13 +41,6 @@ export default function EarningsPage({ doctorId, onLogout }) {
     loadEarnings();
   }, [loadEarnings]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('doctor_id');
-    localStorage.removeItem('doctor_token');
-    onLogout();
-    navigate('/login');
-  };
-
   if (loading) {
     return (
       <div style={styles.container}>

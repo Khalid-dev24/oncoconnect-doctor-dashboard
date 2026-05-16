@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useResponsive } from '../hooks/useResponsive';
 import Navbar from '../components/Navbar';
 import api from '../services/api';
@@ -17,9 +16,7 @@ const COLORS = {
 };
 
 export default function DoctorProfile({ doctorId, onLogout }) {
-  const navigate = useNavigate();
   const { isMobile } = useResponsive();
-  const [doctorData, setDoctorData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -60,7 +57,6 @@ export default function DoctorProfile({ doctorId, onLogout }) {
       setLoading(true);
       try {
         const response = await api.get(`/api/doctors/${doctorId}/profile`);
-        setDoctorData(response.data.doctor);
         setFormData({
           full_name: response.data.doctor.full_name || '',
           email: response.data.doctor.email || '',
@@ -81,17 +77,6 @@ export default function DoctorProfile({ doctorId, onLogout }) {
         // If endpoint doesn't exist, use default empty data
         if (apiErr.response?.status === 404) {
           console.log('Profile endpoint not available, using default data');
-          setDoctorData({
-            full_name: 'Doctor Name',
-            email: '',
-            phone_number: '',
-            mdcn_number: doctorId,
-            hospital: '',
-            specialty: 'Oncology',
-            bank_name: '',
-            bank_account_number: '',
-            bank_account_name: '',
-          });
         } else {
           throw apiErr;
         }
