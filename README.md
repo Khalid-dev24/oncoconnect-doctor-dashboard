@@ -68,3 +68,25 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Backend + Frontend Run Instructions
+
+To run the full doctor dashboard with the backend, start the backend and frontend in separate terminals.
+
+1. Backend
+```bash
+cd ~/Desktop/oncoconnect-backend
+npm install
+npm run dev
+```
+
+2. Frontend
+```bash
+cd ~/Desktop/oncoconnect-doctor-dashboard
+npm install
+npm start
+```
+
+3. Visit `http://localhost:3000` for the React app.
+
+The frontend is configured to use the backend via `REACT_APP_API_BASE_URL` in `./.env`.

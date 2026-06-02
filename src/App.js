@@ -9,6 +9,7 @@ import PatientPanel from './pages/PatientPanel';
 import EarningsPage from './pages/EarningsPage';
 import PrescriptionsPage from './pages/PrescriptionsPage';
 import DoctorProfile from './pages/DoctorProfile';
+import DoctorMessages from './pages/DoctorMessages';
 
 // Colors
 const COLORS = {
@@ -101,6 +102,14 @@ export default function App() {
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
               <PatientPanel doctorId={doctorId} onLogout={handleLogout} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated} isLoading={isLoading}>
+              <DoctorMessages doctorId={doctorId} onLogout={handleLogout} />
             </ProtectedRoute>
           }
         />

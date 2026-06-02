@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useResponsive } from '../hooks/useResponsive';
 import Navbar from '../components/Navbar';
 import api from '../services/api';
@@ -17,7 +16,6 @@ const COLORS = {
 };
 
 export default function PrescriptionsPage({ doctorId, onLogout }) {
-  const navigate = useNavigate();
   const { isMobile } = useResponsive();
   const [prescriptions, setPrescriptions] = useState([]);
   const [patients, setPatients] = useState([]);

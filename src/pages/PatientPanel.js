@@ -230,7 +230,7 @@ export default function PatientPanel({ doctorId, onLogout }) {
 
                 <div style={styles.detailSection}>
                   <h3 style={styles.sectionTitle}>Actions</h3>
-                  <button style={styles.actionButton}>
+                  <button style={styles.actionButton} onClick={() => navigate(`/messages?patientId=${selectedPatient.id}`)}>
                     📨 Send Message
                   </button>
                   <button style={styles.actionButton}>

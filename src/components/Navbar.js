@@ -68,6 +68,15 @@ export default function Navbar({ currentPage, onLogout }) {
               Earnings
             </a>
             <a
+              href="/messages"
+              style={{
+                ...styles.navLink,
+                color: currentPage === 'messages' ? COLORS.mint : COLORS.muted,
+              }}
+            >
+              Messages
+            </a>
+            <a
               href="/prescriptions"
               style={{
                 ...styles.navLink,
@@ -130,6 +139,13 @@ export default function Navbar({ currentPage, onLogout }) {
                   style={styles.mobileLink}
                 >
                   Prescriptions
+                </a>
+                <a
+                  href="/messages"
+                  onClick={() => handleNavClick('/messages')}
+                  style={styles.mobileLink}
+                >
+                  Messages
                 </a>
                 <a
                   href="/profile"
