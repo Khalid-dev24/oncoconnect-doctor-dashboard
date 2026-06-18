@@ -73,9 +73,18 @@ export default function DoctorMessages({ doctorId, onLogout }) {
     });
 
     socket.on('new_message', (msg) => {
-      // If message belongs to currently open conversation, append it
+      // If message belongs to currently open conversation, dedupe and append it
       if (msg?.conversation_id && selectedConvRef.current && String(msg.conversation_id) === String(selectedConvRef.current.id)) {
-        setMessages(prev => [...prev, msg]);
+        setMessages(prev => {
+          // deduplicate by id
+          if (prev.some(m => String(m.id) === String(msg.id))) return prev;
+          const next = [...prev, msg];
+          // cache to localStorage
+          try {
+            localStorage.setItem(`messages_${selectedConvRef.current.id}`, JSON.stringify(next));
+          } catch (e) { /* ignore */ }
+          return next;
+        });
         setTimeout(() => scrollToBottom(), 50);
         return;
       }
@@ -112,8 +121,18 @@ export default function DoctorMessages({ doctorId, onLogout }) {
 
   async function loadMessages(convId) {
     try {
+      // check cache first
+      const cached = localStorage.getItem(`messages_${convId}`);
+      if (cached) {
+        setMessages(JSON.parse(cached));
+        setTimeout(() => scrollToBottom(), 50);
+      }
+      // fetch fresh messages
       const res = await api.get(`/api/conversations/${convId}/messages`);
-      setMessages(res.data.messages || []);
+      const msgs = res.data.messages || [];
+      setMessages(msgs);
+      // cache for next time
+      localStorage.setItem(`messages_${convId}`, JSON.stringify(msgs));
       setTimeout(() => scrollToBottom(), 50);
     } catch (err) {
       console.error('Failed to load messages', err);
@@ -153,13 +172,22 @@ export default function DoctorMessages({ doctorId, onLogout }) {
     try {
       // optimistic
       const optimistic = { id: `temp-${Date.now()}`, text: text.trim(), sender: 'doctor', created_at: new Date().toISOString() };
-      setMessages(prev => [...prev, optimistic]);
+      setMessages(prev => {
+        if (prev.some(m => m.id === optimistic.id)) return prev;
+        const next = [...prev, optimistic];
+        localStorage.setItem(`messages_${selectedConv.id}`, JSON.stringify(next));
+        return next;
+      });
       setText('');
       scrollToBottom();
       const res = await api.post(`/api/conversations/${selectedConv.id}/messages`, payload);
       // replace optimistic if backend returned message
       if (res.data.message) {
-        setMessages(prev => prev.map(m => m.id === optimistic.id ? res.data.message : m));
+        setMessages(prev => {
+          const next = prev.map(m => m.id === optimistic.id ? res.data.message : m);
+          localStorage.setItem(`messages_${selectedConv.id}`, JSON.stringify(next));
+          return next;
+        });
         showToast('Sent', 'Message delivered');
       } else {
         await loadMessages(selectedConv.id);
