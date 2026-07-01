@@ -118,12 +118,20 @@ export default function PrescriptionsPage({ doctorId, onLogout }) {
   };
 
   const sendPrescriptionToPatient = async (prescription) => {
+    console.log('[PrescriptionsPage] sendPrescriptionToPatient called', prescription && prescription.id);
+    if (!prescription || !prescription.id) {
+      console.warn('[PrescriptionsPage] No prescription id, aborting send', prescription);
+      alert('Cannot send: prescription id missing');
+      return;
+    }
     try {
       setSendingPrescriptionId(prescription.id);
+      console.log('[PrescriptionsPage] POST /api/prescriptions/' + prescription.id + '/send-to-patient');
       const response = await api.post(`/api/prescriptions/${prescription.id}/send-to-patient`, {
         messageText: `Your prescription for ${prescription.drug_name || prescription.drugName || 'your treatment'} is attached here.`,
       });
 
+      console.log('[PrescriptionsPage] send-to-patient response', response?.status, response?.data);
       if (response.data?.success) {
         alert('Prescription sent to the patient chat successfully.');
       } else {
@@ -433,7 +441,8 @@ export default function PrescriptionsPage({ doctorId, onLogout }) {
                     📥 Download
                   </button>
                   <button
-                    onClick={() => sendPrescriptionToPatient(rx)}
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); sendPrescriptionToPatient(rx); }}
                     disabled={sendingPrescriptionId === rx.id}
                     style={{
                       ...styles.actionButton,
