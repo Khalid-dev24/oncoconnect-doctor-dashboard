@@ -442,14 +442,16 @@ export default function PrescriptionsPage({ doctorId, onLogout }) {
                   </button>
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); sendPrescriptionToPatient(rx); }}
+                    onMouseDown={() => console.log('[PrescriptionsPage] button mousedown', rx?.id)}
+                    onClick={(e) => { e.stopPropagation(); console.log('[PrescriptionsPage] button click', rx?.id); sendPrescriptionToPatient(rx); }}
                     disabled={sendingPrescriptionId === rx.id}
                     style={{
                       ...styles.actionButton,
                       opacity: sendingPrescriptionId === rx.id ? 0.7 : 1,
+                      cursor: 'pointer',
                     }}
                   >
-                    {sendingPrescriptionId === rx.id ? 'Sending...' : '📤 Send to Patient'}
+                    {sendingPrescriptionId === rx.id ? 'Sending...' : '📤 Send to Patient — DEBUG'}
                   </button>
                 </div>
               </div>
