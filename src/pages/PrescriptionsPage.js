@@ -22,6 +22,7 @@ export default function PrescriptionsPage({ doctorId, onLogout }) {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [filterStatus, setFilterStatus] = useState('all'); // all, active, inactive
+  const [sendingPrescriptionId, setSendingPrescriptionId] = useState(null);
 
   const [formData, setFormData] = useState({
     patientId: '',
@@ -114,6 +115,27 @@ export default function PrescriptionsPage({ doctorId, onLogout }) {
   const getPatientName = (patientId) => {
     const patient = patients.find(p => p.id === patientId);
     return patient?.auth_user?.full_name || patient?.user_id || 'Unknown Patient';
+  };
+
+  const sendPrescriptionToPatient = async (prescription) => {
+    try {
+      setSendingPrescriptionId(prescription.id);
+      const response = await api.post(`/api/prescriptions/${prescription.id}/send-to-patient`, {
+        messageText: `Your prescription for ${prescription.drug_name || prescription.drugName || 'your treatment'} is attached here.`,
+      });
+
+      if (response.data?.success) {
+        alert('Prescription sent to the patient chat successfully.');
+      } else {
+        alert('Prescription was created, but the chat message could not be sent.');
+      }
+    } catch (err) {
+      console.error('Error sending prescription to patient:', err);
+      const errorMsg = err.response?.data?.error || err.message;
+      alert(`Failed to send prescription: ${errorMsg}`);
+    } finally {
+      setSendingPrescriptionId(null);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -410,8 +432,15 @@ export default function PrescriptionsPage({ doctorId, onLogout }) {
                   >
                     📥 Download
                   </button>
-                  <button style={styles.actionButton}>
-                    📤 Send to Patient
+                  <button
+                    onClick={() => sendPrescriptionToPatient(rx)}
+                    disabled={sendingPrescriptionId === rx.id}
+                    style={{
+                      ...styles.actionButton,
+                      opacity: sendingPrescriptionId === rx.id ? 0.7 : 1,
+                    }}
+                  >
+                    {sendingPrescriptionId === rx.id ? 'Sending...' : '📤 Send to Patient'}
                   </button>
                 </div>
               </div>
